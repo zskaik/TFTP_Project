@@ -10,6 +10,6 @@ Note that it should be possible to run two or more clients as well as the server
 Added May 11th: Your error simulator may be single-threaded and is expected to work with one client only. 
 To test multiple clients, send directly to port 69 (until we move to multiple machines)*/
 
-public class Host {
+public class ErrorSim {
 
 }
