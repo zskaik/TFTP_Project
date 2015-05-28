@@ -14,13 +14,55 @@ The client should not support concurrent file transfers; for example,
 the client will not be able to concurrently transfer multiple files to and from one or more servers.*/
 public class Client {
 	
+	   private DatagramPacket sendPacket, receivePacket;
+	   private DatagramSocket sendReceiveSocket;
+	   private Request request;
+	   public Client() { // create connection as soon as new client is created
+		   
+		   try {
+				sendReceiveSocket = new DatagramSocket();
+			} catch (SocketException e) {
+				System.out.println("Socket could not be created");
+				e.printStackTrace();
+				System.exit(1);
+			}
+	   }
+	
+	 public void sendandReceive() {
+		 
+		 // read request for example 
+		 
+		 request = new Request(1,"filename.txt",69);
+		 sendPacket =  request.create();
+		 
+		// Send the datagram packet to the server via the send/receive socket.
+
+	        try {
+	           sendReceiveSocket.send(sendPacket);
+	        } catch (IOException e) {
+	           e.printStackTrace();
+	           System.exit(1);
+	        }
+	        
+	        byte []data = new byte[100];
+	        receivePacket = new DatagramPacket(data, data.length);
+
+	        System.out.println("Client: Waiting for packet.");
+	        try {
+	           // Block until a datagram is received via sendReceiveSocket.
+	           sendReceiveSocket.receive(receivePacket);
+	        } catch(IOException e) {
+	           e.printStackTrace();
+	           System.exit(1);
+	        }
+	        
+		 
+		 
+	 }   
 	public static void main(String args[])
 	{
-		try {
-			DatagramSocket clientSocket = new DatagramSocket();
-		} catch (SocketException e) {
-		}
-		System.out.println("Welcome! This program utilizes the TFTP to do file transfer");
+		Client client = new Client();
+		client.sendandReceive();
 	}
 
 }
