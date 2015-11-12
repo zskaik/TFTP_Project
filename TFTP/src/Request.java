@@ -18,6 +18,10 @@ public class Request {
 		filename = file;
 		sendPort = port;
 	}
+	public Request()
+	{
+		
+	}
 	
 
 	// function used to create read, write request 
@@ -54,10 +58,40 @@ public class Request {
          }
         return packet;
 	}
+	public int getOpcode (DatagramPacket dp) {
+		 
+	 byte [] ad= dp.getData();
+	 
+	 return ad[1];
+		
+	}
+	public String getFile (DatagramPacket dp) {
+		 
+		byte [] ad= dp.getData();
+		byte [] da =  new byte[ad.length];
+		for (int i=2; i<ad.length; i++) {
+			
+			if (ad[i]==0) { 
+				
+			System.arraycopy(ad, 2, da, 0, i-1);
+			String pos = new String(da);
+			return 	 pos;  
+				
+			}
+			
+			
+		}
+		
+		return "Error";
+		
+		
+	}
+	
+	
 	
 	// skeleton for check function , meant to check integrity of packet , 
 	// TODO change / add more functionality ?
-	public Boolean check(DatagramPacket pckt) {
+	/*public Boolean check(DatagramPacket pckt) {
 		
 		byte [] rcvdata = pckt.getData();
 		
@@ -66,5 +100,5 @@ public class Request {
 		}
 		return true;
 	}
-
+*/
 }

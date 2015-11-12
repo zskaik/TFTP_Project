@@ -16,6 +16,75 @@ Note that the server operator will type in this request in the server window.
 It is neither desirable nor acceptable for a client to request that the server shutdown.
 After being told to shut down, the server should finish all file transfers that are currently in progress,
  but refuse to create new connections with clients. The server should then terminate*/
-public class Server {
+public class Server
+{
+	private static DatagramSocket serverSocket;
+	private static DatagramPacket requestPacket;
+	private static Request request = new Request();
+public Server()
+{
+	try {
+		serverSocket = new DatagramSocket(69);
+	} catch (SocketException e) {
+		e.printStackTrace();
+	}
+}
+public static void handleRequest()
+{
+	byte buf[] = new byte[512]; 
+	requestPacket = new DatagramPacket(buf, buf.length);
+	try {
+		serverSocket.receive(requestPacket);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	int oc = request.getOpcode(requestPacket);
+	System.out.println(oc);
+	String str = request.getFile(requestPacket);
+	System.out.println(str);
+	System.out.println(str.length());
+	
+	/*try {
+		BufferedReader br = new BufferedReader(new FileReader(str));
+		  StringBuilder sb = new StringBuilder();
+		    try {
+				String line = br.readLine();
+				
+				while(line!=null)
+				{
+					sb.append(line);
+			        sb.append(System.lineSeparator());
+			        line = br.readLine();
+				}
+				System.out.println(sb.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	}*/
+	
+	Writer writer = null;
+
+	try {
+	    writer = new BufferedWriter(new OutputStreamWriter(
+	          new FileOutputStream(str), "utf-8"));
+	    writer.write("Something");
+	} catch (IOException ex) {
+	  // report
+	} finally {
+	   try {writer.close();} catch (Exception ex) {System.err.println("ERROR");}
+	}
+	
+  
+}
+public static void main(String args[])
+{
+	new Server();
+	handleRequest();
+	
+}
+
 
 }

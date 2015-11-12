@@ -14,13 +14,13 @@ The client should not support concurrent file transfers; for example,
 the client will not be able to concurrently transfer multiple files to and from one or more servers.*/
 public class Client {
 	
-	   private DatagramPacket sendPacket, receivePacket;
-	   private DatagramSocket sendReceiveSocket;
-	   private Request request;
+	   private DatagramPacket sendPacket,sendPacket2, receivePacket;
+	   private DatagramSocket requestSocket;
+	   private Request request,request2;
 	   public Client() { // create connection as soon as new client is created
 		   
 		   try {
-				sendReceiveSocket = new DatagramSocket();
+				requestSocket = new DatagramSocket();
 			} catch (SocketException e) {
 				System.out.println("Socket could not be created");
 				e.printStackTrace();
@@ -28,17 +28,19 @@ public class Client {
 			}
 	   }
 	
-	 public void sendandReceive() {
+	 public void rqst() {
 		 
 		 // read request for example 
 		 
-		 request = new Request(1,"filename.txt",69);
+		 request = new Request(1,"filename.txt",69); // read request
+		 request2 = new Request(2,"filename.txt",69);  //write request
 		 sendPacket =  request.create();
+		 sendPacket2 = request2.create();
 		 
 		// Send the datagram packet to the server via the send/receive socket.
 
 	        try {
-	           sendReceiveSocket.send(sendPacket);
+	           requestSocket.send(sendPacket);  //request sent to server 
 	        } catch (IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
@@ -47,22 +49,20 @@ public class Client {
 	        byte []data = new byte[100];
 	        receivePacket = new DatagramPacket(data, data.length);
 
-	        System.out.println("Client: Waiting for packet.");
+	        //	`System.out.println("Client: Waiting for packet.");
 	        try {
 	           // Block until a datagram is received via sendReceiveSocket.
-	           sendReceiveSocket.receive(receivePacket);
+	           requestSocket.receive(receivePacket);
 	        } catch(IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
 	        }
-	        
-		 
 		 
 	 }   
 	public static void main(String args[])
 	{
 		Client client = new Client();
-		client.sendandReceive();
+		client.rqst();   //sending request to server
 	}
 
 }
