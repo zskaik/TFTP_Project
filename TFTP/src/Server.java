@@ -44,7 +44,22 @@ public static void handleRequest()
 	if(oc==1)
 	{
 		byte[] d = null;
-		Packet data = new Packet(3,1,d);
+		Packet data = new Packet(3,1,d,requestPacket.getPort());
+		try {
+			serverSocket.send(data.create());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	else if(oc==2)
+	{
+		Packet ack = new Packet(4,0,requestPacket.getPort());
+		try {
+			serverSocket.send(ack.create());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 /*	System.out.println(oc);

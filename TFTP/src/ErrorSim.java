@@ -51,8 +51,27 @@ public static void main(String args[])
 		
 				e.printStackTrace();
 		}
-			
-		
+			recvPacket = new DatagramPacket(buf, buf.length);
+			try{
+				
+				errsimSocket.receive(recvPacket);
+				byte send2[] =recvPacket.getData();
+				try {
+					sendPacket = new DatagramPacket(send2,0,send2.length,InetAddress.getByName("localhost"),clientPort); //create packet to send back to client
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} 
+			}
+			 catch (IOException e) {
+					e.printStackTrace();
+				}
+		break;
 	}
+		Thread t = new Thread() {
+		    public void run() {
+		    	// This thread will handle a particular client's request and pass the packets to/from the server
+		    }
+		};
+		t.start();
 }
 }

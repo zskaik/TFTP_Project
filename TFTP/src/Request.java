@@ -27,7 +27,7 @@ public class Request {
 	// function used to create read, write request 
 	// TODO add ability to write ACK and data packet 
 	public DatagramPacket create(){
-		
+		msg[0]=0;
 		if (reqtype==1) { 
 			msg[1]=1; 
 			
@@ -84,9 +84,46 @@ public class Request {
 		}
 		 String result = data.substring(2, ind);
 		
-		return result;		
+		return result;
+		
+		
 	}
-
+	
+public DatagramPacket createAck(){
+		
+		if (reqtype==1) { 
+			msg[1]=1; 
+			
+			}else if (reqtype ==2) {
+		    msg[1]=2;
+			}
+			else { 
+		return null;
+			}
+		  // building byte array
+		fn = filename.getBytes();
+		System.arraycopy(fn,0,msg,2,fn.length);
+		msg[fn.length+2] = 0;
+		mode = "octet";
+		md = mode.getBytes();
+        System.arraycopy(md,0,msg,fn.length+3,md.length);
+        len = fn.length+md.length+4;
+        msg[len-1] = 0;
+       
+        // create packet 
+        
+        try {
+            packet = new DatagramPacket(msg, len,
+                                InetAddress.getLocalHost(), sendPort);
+         } catch (UnknownHostException e) {
+            e.printStackTrace();
+            System.exit(1);
+         }
+        return packet;
+	}
+	
+	
+	
 	// skeleton for check function , meant to check integrity of packet , 
 	// TODO change / add more functionality ?
 	/*public Boolean check(DatagramPacket pckt) {
