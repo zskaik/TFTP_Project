@@ -19,14 +19,15 @@ After being told to shut down, the server should finish all file transfers that 
 public class Server
 {
 	private static DatagramSocket serverSocket;
-	private static DatagramPacket requestPacket;
+	private static DatagramPacket requestPacket,sendPacket;
 	private static Request request = new Request();
 public Server()
 {
 	try {
 		serverSocket = new DatagramSocket(69);
+		System.out.println("The server's port is " + serverSocket.getLocalPort());
 	} catch (SocketException e) {
-		e.printStackTrace();
+		System.err.println("Socket failed to be created.");
 	}
 }
 public static void handleRequest()
@@ -39,11 +40,18 @@ public static void handleRequest()
 		e.printStackTrace();
 	}
 	int oc = request.getOpcode(requestPacket);
-	System.out.println(oc);
+	
+	if(oc==1)
+	{
+		byte[] d = null;
+		Packet data = new Packet(3,1,d);
+		
+	}
+/*	System.out.println(oc);
 	String str = request.getFile(requestPacket);
 	System.out.println(str);
 	System.out.println(str.length());
-	
+*/
 	/*try {
 		BufferedReader br = new BufferedReader(new FileReader(str));
 		  StringBuilder sb = new StringBuilder();
@@ -65,7 +73,7 @@ public static void handleRequest()
 		e.printStackTrace();
 	}*/
 	
-	Writer writer = null;
+	/*Writer writer = null;
 
 	try {
 	    writer = new BufferedWriter(new OutputStreamWriter(
@@ -76,7 +84,7 @@ public static void handleRequest()
 	} finally {
 	   try {writer.close();} catch (Exception ex) {System.err.println("ERROR");}
 	}
-	
+	*/
   
 }
 public static void main(String args[])

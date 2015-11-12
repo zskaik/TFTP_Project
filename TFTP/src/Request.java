@@ -20,7 +20,7 @@ public class Request {
 	}
 	public Request()
 	{
-		
+		//empty constructor
 	}
 	
 
@@ -68,27 +68,25 @@ public class Request {
 	public String getFile (DatagramPacket dp) {
 		 
 		byte [] ad= dp.getData();
-		byte [] da =  new byte[ad.length];
+		int ind=0;
+		 String data= new String(ad);
+		 
+		
 		for (int i=2; i<ad.length; i++) {
 			
 			if (ad[i]==0) { 
 				
-			System.arraycopy(ad, 2, da, 0, i-1);
-			String pos = new String(da);
-			return 	 pos;  
-				
+			ind=i;
+			break;	
 			}
 			
 			
 		}
+		 String result = data.substring(2, ind);
 		
-		return "Error";
-		
-		
+		return result;		
 	}
-	
-	
-	
+
 	// skeleton for check function , meant to check integrity of packet , 
 	// TODO change / add more functionality ?
 	/*public Boolean check(DatagramPacket pckt) {

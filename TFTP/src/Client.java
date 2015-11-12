@@ -21,8 +21,9 @@ public class Client {
 		   
 		   try {
 				requestSocket = new DatagramSocket();
+			
 			} catch (SocketException e) {
-				System.out.println("Socket could not be created");
+				System.err.println("Socket failed to be created.");
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -32,8 +33,8 @@ public class Client {
 		 
 		 // read request for example 
 		 
-		 request = new Request(1,"filename.txt",69); // read request
-		 request2 = new Request(2,"filename.txt",69);  //write request
+		 request = new Request(1,"filename.txt",70); // read request packet created to send to error simulator connected to port 70
+		 request2 = new Request(2,"filename.txt",70);  // write request packet created to send to error simulator connected to port 70
 		 sendPacket =  request.create();
 		 sendPacket2 = request2.create();
 		 
@@ -41,6 +42,7 @@ public class Client {
 
 	        try {
 	           requestSocket.send(sendPacket);  //request sent to server 
+	       	System.out.println("The client's port is: " + requestSocket.getLocalPort());
 	        } catch (IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);

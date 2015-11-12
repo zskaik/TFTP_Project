@@ -10,6 +10,49 @@ Note that it should be possible to run two or more clients as well as the server
 Added May 11th: Your error simulator may be single-threaded and is expected to work with one client only. 
 To test multiple clients, send directly to port 69 (until we move to multiple machines)*/
 
-public class ErrorSim {
+public class ErrorSim 
+{
+private static DatagramSocket errsimSocket;
+private static DatagramPacket recvPacket, sendPacket;
+private static int clientPort;  // this is used to keep track of the client's port and will be passed into each thread that is created to handle each new client
 
+public ErrorSim()
+{
+	try {
+		errsimSocket  = new DatagramSocket(70);
+		
+	} catch (SocketException e) {System.err.println("Socket failed to be created.") ;
+	}
+	
+}
+public static void main(String args[])
+{
+	new ErrorSim();
+		for(;;)
+		{
+			byte buf[] = new byte[512];
+			recvPacket = new DatagramPacket(buf, buf.length);
+			try {
+				errsimSocket.receive(recvPacket);
+				clientPort = recvPacket.getPort();
+				System.out.println("The client's port is " + clientPort);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			byte send[] =recvPacket.getData();
+			try {
+				sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),69); //create new packet with specified server port number 69
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+			try {
+				errsimSocket.send(sendPacket); //packet received from client is forwarded to server 
+			} catch (IOException e) {
+		
+				e.printStackTrace();
+		}
+			
+		
+	}
+}
 }
