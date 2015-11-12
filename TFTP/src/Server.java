@@ -32,36 +32,48 @@ public Server()
 }
 public static void handleRequest()
 {
-	byte buf[] = new byte[512]; 
-	requestPacket = new DatagramPacket(buf, buf.length);
-	try {
-		serverSocket.receive(requestPacket);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	int oc = request.getOpcode(requestPacket);
 	
-	if(oc==1)
+	for(;;)
+		
 	{
-		byte[] d = null;
-		Packet data = new Packet(3,1,d,requestPacket.getPort());
+		byte buf[] = new byte[512]; 
+		requestPacket = new DatagramPacket(buf, buf.length);
 		try {
-			serverSocket.send(data.create());
+			serverSocket.receive(requestPacket);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		int oc = request.getOpcode(requestPacket);
 		
-	}
-	else if(oc==2)
-	{
-		Packet ack = new Packet(4,0,requestPacket.getPort());
-		try {
-			serverSocket.send(ack.create());
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(oc==1)
+		{
+			byte[] d = null;
+			Packet data = new Packet(3,1,d,requestPacket.getPort());
+			try {
+				serverSocket.send(data.create());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
-		
+		else if(oc==2)
+		{
+			Packet ack = new Packet(4,0,requestPacket.getPort());
+			try {
+				serverSocket.send(ack.create());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		Thread t = new Thread() {
+		    public void run() {
+		    	// This thread will handle a particular client's request and pass the packets to/from the server
+		    }
+		};
+		t.start();
 	}
+	
 /*	System.out.println(oc);
 	String str = request.getFile(requestPacket);
 	System.out.println(str);
