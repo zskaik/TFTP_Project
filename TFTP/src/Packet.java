@@ -56,4 +56,34 @@ public DatagramPacket create(){
      }
     return packet;
  }
+
+public int getOpcode (DatagramPacket dp) {
+	 
+	 byte [] pd= dp.getData();
+	 
+	 return pd[1];
+		
+	}
+
+public int getBlk (DatagramPacket dp) {
+	 
+	 byte [] pd= dp.getData();
+	 
+	 return pd[3];
+		
+	}
+
+public String getData (DatagramPacket dp) {
+	 
+	 byte [] pd= dp.getData();
+	 int ind=0;		 
+	 String data= new String(pd);
+	String result = data.substring(4, pd.length);
+		
+		return result;
+		
+		
+		
+	}
+
 }
