@@ -4,27 +4,31 @@ import java.util.*;
 import java.net.*;
 public class Packet {
 
-	private int op=0;
-	private int blk=0;
+	private byte op=0;
+	private byte blk[]= new byte[1];
 	private int port=0;
 	private int len=0;
 	private byte[] data;
-	private byte[] msg;
+	private byte[] msg = new byte[100];
 	 DatagramPacket packet;
-	public Packet (int op , int blk, byte[] data,int port) {
+	public Packet (byte op , byte blk, byte[] data,int port) {
 	   
 		this.op=op;
-		this.blk=blk;
+		this.blk[0]=blk;
 		this.data=data;
 		this.port=port;
 	
 	}
 	
-	public Packet (int op , int blk,int port) {
+	public Packet (byte op , byte blk,int port) {
 	
 		this.op=op;
-		this.blk=blk;
+		this.blk[0]=blk;
 		this.port=port;
+	}
+	public Packet()
+	{
+		
 	}
 
 
@@ -34,7 +38,9 @@ public DatagramPacket create(){
     
     	msg[1]=3;
     	msg[2]=0;
+    	System.out.println("msg array: " + msg[0]+msg[1]+msg[2]);
     	System.arraycopy(blk,0,msg,3,1);
+    	//System.out.println("after array copy" + new String(msg));
     	System.arraycopy(data,0,msg,4,data.length);
     	
     	
@@ -57,7 +63,7 @@ public DatagramPacket create(){
     return packet;
  }
 
-public int getOpcode (DatagramPacket dp) {
+public byte getOpcode (DatagramPacket dp) {
 	 
 	 byte [] pd= dp.getData();
 	 
@@ -65,7 +71,7 @@ public int getOpcode (DatagramPacket dp) {
 		
 	}
 
-public int getBlk (DatagramPacket dp) {
+public byte getBlk (DatagramPacket dp) {
 	 
 	 byte [] pd= dp.getData();
 	 

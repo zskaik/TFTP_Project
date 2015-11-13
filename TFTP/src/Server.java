@@ -21,6 +21,7 @@ public class Server
 	private static DatagramSocket serverSocket;
 	private static DatagramPacket requestPacket,sendPacket;
 	private static Request request = new Request();
+	private static Packet p;
 public Server()
 {
 	try {
@@ -43,12 +44,17 @@ public static void handleRequest()
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		 System.out.println("Packet received: ");
+         System.out.println("Opcode: " + "0"+request.getOpcode(requestPacket));
+         System.out.println("Data: "+ request.getFile(requestPacket));
+         
 		int oc = request.getOpcode(requestPacket);
 		
 		if(oc==1)
 		{
-			byte[] d = null;
-			Packet data = new Packet(3,1,d,requestPacket.getPort());
+			byte[] d = new byte[0];
+			Packet data = new Packet((byte)3,(byte)1,d,requestPacket.getPort());
 			try {
 				serverSocket.send(data.create());
 			} catch (IOException e) {
@@ -58,7 +64,7 @@ public static void handleRequest()
 		}
 		else if(oc==2)
 		{
-			Packet ack = new Packet(4,0,requestPacket.getPort());
+			Packet ack = new Packet((byte)4,(byte)0,requestPacket.getPort());
 			try {
 				serverSocket.send(ack.create());
 			} catch (IOException e) {

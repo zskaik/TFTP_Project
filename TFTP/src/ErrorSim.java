@@ -61,6 +61,8 @@ public static void main(String args[])
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} 
+				
+				errsimSocket.send(sendPacket);
 			}
 			 catch (IOException e) {
 					e.printStackTrace();
@@ -69,7 +71,7 @@ public static void main(String args[])
 	}
 		Thread t = new Thread() {
 		    public void run() {
-		    	// This thread will handle a particular client's request and pass the packets to/from the server
+		    	
 		    }
 		};
 		t.start();

@@ -17,6 +17,7 @@ public class Client {
 	   private DatagramPacket sendPacket,sendPacket2, receivePacket;
 	   private DatagramSocket requestSocket;
 	   private Request request,request2;
+	   private Packet p = new Packet();
 	   public Client() { // create connection as soon as new client is created
 		   
 		   try {
@@ -55,6 +56,12 @@ public class Client {
 	        try {
 	           // Block until a datagram is received via sendReceiveSocket.
 	           requestSocket.receive(receivePacket);
+	           System.out.println("Packet received: ");
+	        // System.out.println(receivePacket.getData());
+	           System.out.println("Opcode: " + "0"+p.getOpcode(receivePacket));
+	           System.out.println("Block number: " + "0"+p.getBlk(receivePacket));
+	           System.out.println("Data: "+ p.getData(receivePacket));
+	           
 	        } catch(IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
