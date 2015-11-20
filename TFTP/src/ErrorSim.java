@@ -69,11 +69,29 @@ public static void main(String args[])
 				}
 		break;
 	}
-		Thread t = new Thread() {
-		    public void run() {
-		    	
-		    }
-		};
-		t.start();
+		
 }
 }
+class errSimThread extends Thread{
+DatagramSocket threadSocket;
+DatagramPacket receivePacket, sendPacket;
+
+public errSimThread()
+{
+	try {
+		threadSocket = new DatagramSocket();
+	} catch (SocketException e) {
+		e.printStackTrace();
+	}
+	byte buf[] = new byte[512];
+	receivePacket = new DatagramPacket(buf,buf.length);
+	
+}
+	public void run()
+	{
+	 	
+		
+	}
+
+}
+

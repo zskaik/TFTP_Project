@@ -38,11 +38,18 @@ public class Client {
 		 request2 = new Request(2,"filename.txt",70);  // write request packet created to send to error simulator connected to port 70
 		 sendPacket =  request.create();
 		 sendPacket2 = request2.create();
+		 readRequest(sendPacket);
+		 writeRequest(sendPacket2);
+		 
 		 
 		// Send the datagram packet to the server via the send/receive socket.
 
-	        try {
-	           requestSocket.send(sendPacket);  //request sent to server 
+	      
+	 }   
+	 public void readRequest(DatagramPacket requestpacket)
+	 {
+		 try {
+	           requestSocket.send(requestpacket);  //request sent to server 
 	       	System.out.println("The client's port is: " + requestSocket.getLocalPort());
 	        } catch (IOException e) {
 	           e.printStackTrace();
@@ -60,14 +67,47 @@ public class Client {
 	        // System.out.println(receivePacket.getData());
 	           System.out.println("Opcode: " + "0"+p.getOpcode(receivePacket));
 	           System.out.println("Block number: " + "0"+p.getBlk(receivePacket));
-	           System.out.println("Data: "+ p.getData(receivePacket));
+	         //  System.out.println("Data: "+ p.getData(receivePacket));
+	           
+	        } catch(IOException e) {
+	           e.printStackTrace();
+	           System.exit(1);
+	        }
+	        // need to send ACK before reading
+	        
+		 
+		 
+	 }
+	 public void writeRequest(DatagramPacket requestpacket)
+	 {
+		  try {
+	           requestSocket.send(requestpacket);  //request sent to server 
+	       	System.out.println("The client's port is: " + requestSocket.getLocalPort());
+	        } catch (IOException e) {
+	           e.printStackTrace();
+	           System.exit(1);
+	        }
+	        
+	        byte []data = new byte[100];
+	        receivePacket = new DatagramPacket(data, data.length);
+
+	        //	`System.out.println("Client: Waiting for packet.");
+	        try {
+	           // Block until a datagram is received via sendReceiveSocket.
+	           requestSocket.receive(receivePacket);
+	           System.out.println("Packet received: ");
+	        // System.out.println(receivePacket.getData());
+	           System.out.println("Opcode: " + "0"+p.getOpcode(receivePacket));
+	           System.out.println("Block number: " + "0"+p.getBlk(receivePacket));
+	         //  System.out.println("Data: "+ p.getData(receivePacket));
 	           
 	        } catch(IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
 	        }
 		 
-	 }   
+		 
+	 }
 	public static void main(String args[])
 	{
 		Client client = new Client();
