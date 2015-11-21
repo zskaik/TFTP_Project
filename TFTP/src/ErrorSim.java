@@ -76,23 +76,38 @@ public static void main(String args[])
 					
 					byte send3[] =recvPacket.getData();
 					sendPacket = new DatagramPacket(send3,0,send3.length,InetAddress.getByName("localhost"),69);
+					errsimSocket.send(sendPacket); // send ACK to server right before starting the read
 				} catch (IOException e) {
 				}
 				
 			}
-			errSimThread t = new errSimThread(clientPort);
+			
+			
+			// wait for next data packet before starting thread
+			int serverThreadPort = 0; 
+			byte buf2[] = new byte[1000]; //make byte array for data packets to be received
+			recvPacket = new DatagramPacket(buf2,buf2.length);
+			try {
+				errsimSocket.receive(recvPacket);
+				serverThreadPort= recvPacket.getPort();
+				byte send4[] =recvPacket.getData();
+				sendPacket = new DatagramPacket(send4,0,send4.length,InetAddress.getByName("localhost"),clientPort);
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			}
+			errSimThread t = new errSimThread(clientPort,serverThreadPort); 
+			
 			t.start();
-	}
-	
-		
-		
+	}	
 }
 }
 class errSimThread extends Thread{
 DatagramSocket threadSocket;
 DatagramPacket receivePacket, sendPacket;
 int clientPort =0;
-public errSimThread(int clientPort)
+int serverThreadPort=0;
+public errSimThread(int clientPort, int serverThreadPort)
 {
 	try {
 		threadSocket = new DatagramSocket();
@@ -103,6 +118,7 @@ public errSimThread(int clientPort)
 	receivePacket = new DatagramPacket(buf,buf.length);
 	
 	this.clientPort=clientPort;
+	this.serverThreadPort=serverThreadPort;
 }
 	public void run()
 	{
@@ -115,13 +131,24 @@ public errSimThread(int clientPort)
 				e.printStackTrace();
 			}
 	 		byte[] send = receivePacket.getData();
-	 		if(receivePacket.getPort()==clientPort)
+	 		if(receivePacket.getPort()==clientPort) // if we receive a packet from the client then we should send it to the server thread and vice versa  
 	 		{
-	 			//sendPacket = new DatagramPacket(send,0,send.length,IN)
+	 			try {
+					sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),serverThreadPort);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+	 			
 	 		}
-	 	}
-		
+	 		else // otherwise if we receive a packet from the serverThread we need to forward the packet to the client
+	 		{
+
+	 			try {
+					sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),clientPort);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+	 		}
+	 	}	
 	}
-
 }
-
