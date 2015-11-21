@@ -19,9 +19,9 @@ After being told to shut down, the server should finish all file transfers that 
 public class Server
 {
 	private static DatagramSocket serverSocket;
-	private static DatagramPacket requestPacket,sendPacket;
+	private static DatagramPacket requestPacket,sendPacket,requestPacketAck;
 	private static Request request = new Request();
-	private static Packet p;
+	private static Packet p,d;
 public Server()
 {
 	try {
@@ -62,6 +62,17 @@ public static void handleRequest()
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			requestPacketAck = new DatagramPacket(buf, buf.length);
+			try {
+				serverSocket.receive(requestPacketAck); 
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			String filename = request.getFile(requestPacketAck);
+			serverThread s = new serverThread(oc,filename);
+			s.start();
+			
 			
 		}
 		else if(oc==2)
@@ -128,9 +139,15 @@ public static void main(String args[])
 class serverThread extends Thread{
 DatagramSocket threadSocket;
 DatagramPacket receivePacket, sendPacket;
-
-public serverThread()
+private static Packet d;
+int op;
+byte count=2;
+String s;
+public serverThread(int x, String file)
 {
+	 op = x;
+	 s=file;
+	;
 	try {
 		threadSocket = new DatagramSocket();
 	} catch (SocketException e) {
@@ -142,6 +159,32 @@ public serverThread()
 }
 	public void run()
 	{
+		 if (op==1) {
+			 
+			 InputStream reader = null;
+   			File file = new File("server_files\\" +s);
+			 
+   			try {
+  				reader = new FileInputStream(file);
+  				 byte[] data = new byte[512];
+  				while ( (reader.read(data))!=-1) {
+  					//byte op , byte blk, byte[] data,int port
+					d = new Packet ((byte)op,count,data,70);
+  					sendPacket = d.create();
+  					threadSocket.send(sendPacket);
+  					
+  				}	 
+  				 
+  			} catch (FileNotFoundException e1) {
+				
+  				
+  				System.exit(1);
+  				//e1.printStackTrace();
+  			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
 	 	
 		
 	}
