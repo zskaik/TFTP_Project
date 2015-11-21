@@ -15,13 +15,14 @@ the client will not be able to concurrently transfer multiple files to and from 
 public class Client {
 	
 	   private DatagramPacket sendPacket,sendPacket2, receivePacket;
-	   private DatagramSocket requestSocket;
+	   private DatagramSocket clientSocket;
 	   private Request request,request2;
 	   private Packet p = new Packet();
+	   private int errSimPort = 70;
 	   public Client() { // create connection as soon as new client is created
 		   
 		   try {
-				requestSocket = new DatagramSocket();
+				clientSocket = new DatagramSocket();
 			
 			} catch (SocketException e) {
 				System.err.println("Socket failed to be created.");
@@ -34,8 +35,8 @@ public class Client {
 		 
 		 // read request for example 
 		 
-		 request = new Request(1,"filename.txt",70); // read request packet created to send to error simulator connected to port 70
-		 request2 = new Request(2,"filename.txt",70);  // write request packet created to send to error simulator connected to port 70
+		 request = new Request(1,"filename.txt",errSimPort); // read request packet created to send to error simulator connected to port 70
+		 request2 = new Request(2,"filename.txt",errSimPort);  // write request packet created to send to error simulator connected to port 70
 		 sendPacket =  request.create();
 		 sendPacket2 = request2.create();
 		 readRequest(sendPacket);
@@ -49,8 +50,8 @@ public class Client {
 	 public void readRequest(DatagramPacket requestpacket)
 	 {
 		 try {
-	           requestSocket.send(requestpacket);  //request sent to server 
-	       	System.out.println("The client's port is: " + requestSocket.getLocalPort());
+	           clientSocket.send(requestpacket);  //request sent to server 
+	       	System.out.println("The client's port is: " + clientSocket.getLocalPort());
 	        } catch (IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
@@ -62,7 +63,9 @@ public class Client {
 	        //	`System.out.println("Client: Waiting for packet.");
 	        try {
 	           // Block until a datagram is received via sendReceiveSocket.
-	           requestSocket.receive(receivePacket);
+	           clientSocket.receive(receivePacket);
+	           
+	          
 	           System.out.println("Packet received: ");
 	        // System.out.println(receivePacket.getData());
 	           System.out.println("Opcode: " + "0"+p.getOpcode(receivePacket));
@@ -75,14 +78,25 @@ public class Client {
 	        }
 	        // need to send ACK before reading
 	        
-		 
+	        Packet ackPacket = new Packet((byte)4,(byte)1,errSimPort);
+	        DatagramPacket ack = ackPacket.create();
+	        try {
+				clientSocket.send(ack);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	        for(;;)
+	        {
+	        	
+	        	// loop used to handle steady state file transfer 
+	        }
 		 
 	 }
 	 public void writeRequest(DatagramPacket requestpacket)
 	 {
 		  try {
-	           requestSocket.send(requestpacket);  //request sent to server 
-	       	System.out.println("The client's port is: " + requestSocket.getLocalPort());
+	           clientSocket.send(requestpacket);  //request sent to server 
+	       	//System.out.println("The client's port is: " + requestSocket.getLocalPort());
 	        } catch (IOException e) {
 	           e.printStackTrace();
 	           System.exit(1);
@@ -94,7 +108,7 @@ public class Client {
 	        //	`System.out.println("Client: Waiting for packet.");
 	        try {
 	           // Block until a datagram is received via sendReceiveSocket.
-	           requestSocket.receive(receivePacket);
+	           clientSocket.receive(receivePacket);
 	           System.out.println("Packet received: ");
 	        // System.out.println(receivePacket.getData());
 	           System.out.println("Opcode: " + "0"+p.getOpcode(receivePacket));
@@ -105,7 +119,11 @@ public class Client {
 	           e.printStackTrace();
 	           System.exit(1);
 	        }
-		 
+	        for(;;)
+	        {
+	        	
+	        	// loop used to handle steady state file transfer 
+	        }
 		 
 	 }
 	public static void main(String args[])

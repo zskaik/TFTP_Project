@@ -15,7 +15,7 @@ public class ErrorSim
 private static DatagramSocket errsimSocket;
 private static DatagramPacket recvPacket, sendPacket;
 private static int clientPort;  // this is used to keep track of the client's port and will be passed into each thread that is created to handle each new client
-
+private static Packet p = new Packet();
 public ErrorSim()
 {
 	try {
@@ -64,32 +64,62 @@ public static void main(String args[])
 				
 				errsimSocket.send(sendPacket);
 			}
+			
 			 catch (IOException e) {
 					e.printStackTrace();
 				}
-		break;
+			if(p.getOpcode(recvPacket)==3) // if we receive a DATA packet back from the server then we know the client will send an ACK before the reading begins
+			{
+				recvPacket = new DatagramPacket(buf, buf.length);
+				try {
+					errsimSocket.receive(recvPacket);
+					
+					byte send3[] =recvPacket.getData();
+					sendPacket = new DatagramPacket(send3,0,send3.length,InetAddress.getByName("localhost"),69);
+				} catch (IOException e) {
+				}
+				
+			}
+			errSimThread t = new errSimThread(clientPort);
+			t.start();
 	}
+	
+		
 		
 }
 }
 class errSimThread extends Thread{
 DatagramSocket threadSocket;
 DatagramPacket receivePacket, sendPacket;
-
-public errSimThread()
+int clientPort =0;
+public errSimThread(int clientPort)
 {
 	try {
 		threadSocket = new DatagramSocket();
 	} catch (SocketException e) {
 		e.printStackTrace();
 	}
-	byte buf[] = new byte[512];
+	byte buf[] = new byte[1000]; //make byte array for data packets to be received
 	receivePacket = new DatagramPacket(buf,buf.length);
 	
+	this.clientPort=clientPort;
 }
 	public void run()
 	{
-	 	
+	 	for(;;)
+	 	{
+	 		try {
+				threadSocket.receive(receivePacket);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+	 		byte[] send = receivePacket.getData();
+	 		if(receivePacket.getPort()==clientPort)
+	 		{
+	 			//sendPacket = new DatagramPacket(send,0,send.length,IN)
+	 		}
+	 	}
 		
 	}
 

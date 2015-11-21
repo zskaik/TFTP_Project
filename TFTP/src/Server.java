@@ -45,6 +45,8 @@ public static void handleRequest()
 			e.printStackTrace();
 		}
 		
+		
+		
 		 System.out.println("Packet received: ");
          System.out.println("Opcode: " + "0"+request.getOpcode(requestPacket));
          System.out.println("Data: "+ request.getFile(requestPacket));
@@ -72,12 +74,6 @@ public static void handleRequest()
 			}
 			
 		}
-		Thread t = new Thread() {
-		    public void run() {
-		    	// This thread will handle a particular client's request and pass the packets to/from the server
-		    }
-		};
-		t.start();
 	}
 	
 /*	System.out.println(oc);
@@ -127,5 +123,27 @@ public static void main(String args[])
 	
 }
 
+
+}
+class serverThread extends Thread{
+DatagramSocket threadSocket;
+DatagramPacket receivePacket, sendPacket;
+
+public serverThread()
+{
+	try {
+		threadSocket = new DatagramSocket();
+	} catch (SocketException e) {
+		e.printStackTrace();
+	}
+	byte buf[] = new byte[1000];
+	receivePacket = new DatagramPacket(buf,buf.length);
+	
+}
+	public void run()
+	{
+	 	
+		
+	}
 
 }
