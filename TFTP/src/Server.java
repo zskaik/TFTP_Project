@@ -75,7 +75,7 @@ public static void main(String args[])
 
 }
 class serverThread extends Thread{
-DatagramSocket threadSocket;
+static DatagramSocket threadSocket;
 DatagramPacket receivePacket, sendPacket;
 private static Packet d, p;
 private static int datanum, acknum, errSimThreadPort;
@@ -147,6 +147,16 @@ public serverThread(int x, String file,int errSimThreadPort)
 	 	
 		
 	}
+	 public static void sendAck()
+	 {
+		   Packet ackPacket = new Packet((byte)4,(byte)acknum,errSimThreadPort);
+	        DatagramPacket ack = ackPacket.create();
+	        try {
+				threadSocket.send(ack);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	 }
 	/**
 	 * Method to check the Ack number and verify its correctness
 	 */
