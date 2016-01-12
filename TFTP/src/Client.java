@@ -38,7 +38,7 @@ public class Client {
 	 public void rqst() {
 		 
 		 // read request for example 
-		 filename1 = "file1.txt";
+		 filename1 = "filename.txt";
 		 filename2 = "filename.txt";
 		 request = new Request(1,filename1,errSimPort); // read request packet created to send to error simulator connected to port 70
 		 request2 = new Request(2,filename2,errSimPort);  // write request packet created to send to error simulator connected to port 70
@@ -101,7 +101,7 @@ public class Client {
 						
 				        try {
 				          
-				            output = new BufferedWriter(new FileWriter("received/"+file));
+				            output = new BufferedWriter(new FileWriter(file));
 				            output.write(d);
 				        } catch ( IOException e ) {
 				            e.printStackTrace();

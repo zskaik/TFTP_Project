@@ -164,6 +164,8 @@ class errSimThread extends Thread{
 					e.printStackTrace();
 			}
 			
+			
+	
 	}
 	
 	
