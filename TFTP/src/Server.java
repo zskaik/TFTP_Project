@@ -77,11 +77,12 @@ public static void main(String args[])
 class serverThread extends Thread{
 DatagramSocket threadSocket;
 DatagramPacket receivePacket, sendPacket;
+private byte dat=03, ack=04;
 private static Packet d, p;
-private static int datanum, acknum, errSimThreadPort;
+private static int datanum, acknum=0, errSimThreadPort;
 int op;
 String s;
-
+private static Request r = new Request();
 public serverThread(int x, String file,int errSimThreadPort)
 {
 	 op = x;
@@ -122,9 +123,10 @@ public serverThread(int x, String file,int errSimThreadPort)
    			try {
   				reader = new FileInputStream(file);
   				 byte[] data = new byte[512];
+  				
   				while ( (reader.read(data))!=-1) {
   					//byte op , byte blk, byte[] data,int port
-					d = new Packet ((byte)op,(byte)datanum,data,this.errSimThreadPort);
+					d = new Packet (dat,(byte)datanum,data,this.errSimThreadPort);
   					sendPacket = d.create();
   					threadSocket.send(sendPacket);
   					
@@ -143,10 +145,31 @@ public serverThread(int x, String file,int errSimThreadPort)
 				e.printStackTrace();
 			}
 			
-		 }
-	 	
+		 }else if(op==2) { 
+				
+			 
+		     
+			 File file = new File(r.getFile(receivePacket));
+			byte[] data = new byte[512];
+			 try {
+				FileOutputStream out = new FileOutputStream(file);
+				for (;;) {
+				out.write(data);
+				d = new Packet (ack,(byte)acknum,this.errSimThreadPort);
+				sendPacket = d.create();
+				threadSocket.send(sendPacket);
+				acknum++;   
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	            
+				
+				
+			}
 		
-	}
+	} 
 	/**
 	 * Method to check the Ack number and verify its correctness
 	 */
