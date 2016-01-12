@@ -27,16 +27,19 @@ public ErrorSim()
 	
 }
 public static void main(String args[])
-{
+{ 
+	
+	new ErrorSim();
 	
 		for(;;)
 		{
 			byte buf[] = new byte[512];
 			recvPacket = new DatagramPacket(buf, buf.length);
 			try {
+			
 				errsimSocket.receive(recvPacket); // Received request packet from client
 				clientPort = recvPacket.getPort();
-				System.out.println("The client's port is " + clientPort);
+				printReceivedPacket(recvPacket);
 				errSimThread t = new errSimThread(clientPort,recvPacket);
 				t.start();
 			} catch (IOException e) {
@@ -45,17 +48,29 @@ public static void main(String args[])
 			
 				}	
 }
+
+public static void printReceivedPacket(DatagramPacket packet)
+{
+	  System.out.println("Packet received: ");
+       // System.out.println(receivePacket.getData());
+          System.out.println("Opcode: " + "0"+p.getOpcode(packet));
+          System.out.println("Block number: " + "0"+p.getBlk(packet));
+        //  System.out.println("Data: "+ p.getData(receivePacket));
+          
+}
 }
 class errSimThread extends Thread{
 	private DatagramSocket threadSocket;
 	private DatagramPacket requestPacket,receivedPacket, sendPacket;
 	private int clientPort, serverThreadPort;
+	private static Packet p = new Packet();
 
 	
 	public errSimThread(int clientPort,DatagramPacket requestPacket)
 	{
 		try {
 			this.threadSocket= new DatagramSocket();
+			System.out.println("The error simulator thread's port is " + threadSocket.getLocalPort());
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,13 +92,13 @@ class errSimThread extends Thread{
 	
 			e.printStackTrace();
 	}
-		
 			
 			byte buf[] = new byte[512];
 			receivedPacket = new DatagramPacket(buf, buf.length);
 			try{
 				
 				threadSocket.receive(receivedPacket);
+				printReceivedPacket(receivedPacket);
 			}
 			
 			 catch (IOException e) {
@@ -94,7 +109,7 @@ class errSimThread extends Thread{
 			
 			
 			
-			send=this.receivedPacket.getData();
+			send=this.receivedPacket.getData();	
 			try {
 				this.sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),this.clientPort); 
 			} catch (UnknownHostException e) {
@@ -114,6 +129,7 @@ class errSimThread extends Thread{
 				try{
 					
 					threadSocket.receive(receivedPacket);
+					printReceivedPacket(receivedPacket);
 				}
 				
 				 catch (IOException e) {
@@ -154,5 +170,14 @@ class errSimThread extends Thread{
 	
 	
 }
+	 public static void printReceivedPacket(DatagramPacket packet)
+	 {
+		  System.out.println("Packet received: ");
+	        // System.out.println(receivePacket.getData());
+	           System.out.println("Opcode: " + "0"+p.getOpcode(packet));
+	           System.out.println("Block number: " + "0"+p.getBlk(packet));
+	         //  System.out.println("Data: "+ p.getData(receivePacket));
+	           
+	 }
 }
 

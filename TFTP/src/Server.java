@@ -41,6 +41,7 @@ public static void handleRequest()
 		try {
 			serverSocket.receive(requestPacket);
 			errSimThreadPort = requestPacket.getPort();
+			System.out.println("The error simulator thread's port is " + errSimThreadPort);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,20 +89,31 @@ public serverThread(int x, String file,int errSimThreadPort)
 	;
 	try {
 		threadSocket = new DatagramSocket();
-		System.out.println("The server thread's port is "+ threadSocket.getLocalPort());
+	
 	} catch (SocketException e) {
 		e.printStackTrace();
 	}
 	byte buf[] = new byte[1000];
 	receivePacket = new DatagramPacket(buf,buf.length);
-	
+	this.errSimThreadPort=errSimThreadPort;
 	
 }
 	public void run()
 	{
 		 if (op==1) {
 			 
+			 
+
+				byte[] d0= new byte[0];
+				Packet data0 = new Packet((byte)3,(byte)1,d0,this.errSimThreadPort);
+				try {
+					threadSocket.send(data0.create());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			 datanum=1;
+			 
+			 
 			 
 			 InputStream reader = null;
 			 System.out.println("The file name to be read is"+ s);
@@ -112,7 +124,7 @@ public serverThread(int x, String file,int errSimThreadPort)
   				 byte[] data = new byte[512];
   				while ( (reader.read(data))!=-1) {
   					//byte op , byte blk, byte[] data,int port
-					d = new Packet ((byte)op,(byte)datanum,data,errSimThreadPort);
+					d = new Packet ((byte)op,(byte)datanum,data,this.errSimThreadPort);
   					sendPacket = d.create();
   					threadSocket.send(sendPacket);
   					
@@ -130,6 +142,7 @@ public serverThread(int x, String file,int errSimThreadPort)
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		 }
 	 	
 		
@@ -145,5 +158,5 @@ public void checkAckNumber()
  * Method to check the Data block number to verify its correctness
  */
 public void checkDataNumber(){
-}
+}  
 }
