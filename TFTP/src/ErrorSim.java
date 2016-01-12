@@ -28,7 +28,7 @@ public ErrorSim()
 }
 public static void main(String args[])
 {
-	new ErrorSim();
+	
 		for(;;)
 		{
 			byte buf[] = new byte[512];
@@ -37,66 +37,14 @@ public static void main(String args[])
 				errsimSocket.receive(recvPacket); // Received request packet from client
 				clientPort = recvPacket.getPort();
 				System.out.println("The client's port is " + clientPort);
+				errSimThread t = new errSimThread(clientPort,recvPacket);
+				t.start();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			
-			byte buf2[] = new byte[512];
-			recvPacket = new DatagramPacket(buf2, buf2.length);
-			try {
-				errsimSocket.receive(recvPacket);
-				serverThreadPort = recvPacket.getPort();
-				System.out.println("The server thread's port is " + serverThreadPort);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(p.getOpcode(recvPacket)==3) // if we receive a DATA packet from the server then we know it's a RRQ 
-			{
-				
-				try {
-					sendPacket = new DatagramPacket(recvPacket.getData(),recvPacket.getData().length,InetAddress.getByName("localhost"),clientPort);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					errsimSocket.send(sendPacket);  // send DATA BLK 1 packet to client 
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				recvPacket = new DatagramPacket(buf, buf.length); 
-				try {
-					errsimSocket.receive(recvPacket);  // received ACK BLK 1 
-					serverThreadPort = recvPacket.getPort();
-					
-				} catch (IOException e) {
-				}
-				
-				try {
-					sendPacket = new DatagramPacket(recvPacket.getData(),recvPacket.getData().length,InetAddress.getByName("localhost"),69); //create new packet with specified server port number 69
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-				try {
-					errsimSocket.send(sendPacket); //packet received from client is forwarded to server 
-				} catch (IOException e) {
-			
-					e.printStackTrace();
-			}
-					
-			}
-			else if(p.getOpcode(recvPacket)==4) // otherwise if we receive an ACK packet then we know it's WRQ
-			{
-				try {
-					errsimSocket.receive(recvPacket);
-					
-				} catch (IOException e) {
-				}
-			}
-	}	
+				}	
+}
 }
 class errSimThread extends Thread{
 	private DatagramSocket threadSocket;
@@ -207,4 +155,4 @@ class errSimThread extends Thread{
 	
 }
 }
-}
+

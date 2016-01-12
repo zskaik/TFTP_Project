@@ -83,13 +83,7 @@ public class Client {
 	        	  // need to send ACK before reading
 	        	acknum = 1; // initial ack block number is 1
 		        
-		        Packet ackPacket = new Packet((byte)4,(byte)acknum,errSimThreadPort);
-		        DatagramPacket ack = ackPacket.create();
-		        try {
-					clientSocket.send(ack);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		        sendAck();
 		        BufferedWriter output = null;
 		        File file = new File(filename);
 		        for(;;)
