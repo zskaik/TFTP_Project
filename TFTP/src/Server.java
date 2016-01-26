@@ -121,7 +121,7 @@ public serverThread(int x, String file,int errSimThreadPort)
    			File file = new File(s);
 			 
    			try {
-  				reader = new FileInputStream(file);
+  				reader = new FileInputStream("./files/"+file);
   				 byte[] data = new byte[512];
   				
   				while ( (reader.read(data))!=-1) {
