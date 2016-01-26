@@ -129,6 +129,7 @@ public serverThread(int x, String file,int errSimThreadPort)
 					d = new Packet (dat,(byte)datanum,data,this.errSimThreadPort);
   					sendPacket = d.create();
   					threadSocket.send(sendPacket);
+  					datanum++;
   					
   					byte[] ack = new byte[512];
   					receivePacket = new DatagramPacket(ack,ack.length);

@@ -139,7 +139,7 @@ class errSimThread extends Thread{
 				if(receivedPacket.getPort()==clientPort)
 				{
 						
-						 send =this.requestPacket.getData();
+						 send =this.receivedPacket.getData();
 						try {
 							this.sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),serverThreadPort);
 						} catch (UnknownHostException e) {
@@ -149,7 +149,7 @@ class errSimThread extends Thread{
 				}
 				else if(receivedPacket.getPort()==serverThreadPort)
 				{
-					 send =this.requestPacket.getData();
+					 send =this.receivedPacket.getData();
 						try {
 							this.sendPacket = new DatagramPacket(send,0,send.length,InetAddress.getByName("localhost"),clientPort);
 						} catch (UnknownHostException e) {
