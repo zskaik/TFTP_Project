@@ -9,7 +9,7 @@ public class Packet {
 	private int port=0;
 	private int len=0;
 	private byte[] data;
-	private byte[] msg = new byte[100];
+	private byte[] msg = new byte[516];
 	 DatagramPacket packet;
 	public Packet (byte op , byte blk, byte[] data,int port) {
 	   
